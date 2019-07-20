@@ -13,6 +13,7 @@ from mpdc import MopidyClient
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
 log = logging.getLogger(__name__)
 
+
 # TODO: Extract constants.
 ACT_PUSH = 0
 ACT_DOWN = -1

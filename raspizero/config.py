@@ -15,4 +15,4 @@ MPD_HOST = getenv('MPD_HOST', 'localhost')  # Hostname of MPD instance.
 # Volume control configuration.
 VOLUME_MIN = 5
 VOLUME_MAX = 99
-VOLUME_INCREMENT = 1
+VOLUME_STEP = 4

@@ -21,8 +21,8 @@ Hardware-based remote controller for Mopidy instance
 * requests
 
 Considered:
-* `smbus`module for serial driver in development
-* [`luma.oled`](https://github.com/rm-hull/luma.oled/) display driver in development
+* `smbus`module for serial driver
+* [`luma.oled`](https://github.com/rm-hull/luma.oled/) display driver
 
 ## Micropython stack (ESP)
 Considered:
@@ -35,4 +35,5 @@ Considered:
 
 ### Development rig
 
-![](./sketch_rpi_bb.png)
+![](./docs/sketch_rpi_bb.png)
+

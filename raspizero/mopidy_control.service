@@ -1,0 +1,16 @@
+# system.d service template.
+[Unit]
+Description=Mopidy Control Service
+
+[Service]
+User=pi
+Group=pi
+# ExecStart=<project_path>/main.py
+# Environment=MPD_HOST=<mopidy_host>
+# Environment=DEBUG=1
+Restart=on-failure
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target
+

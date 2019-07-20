@@ -4,11 +4,12 @@ from uuid import uuid4
 
 from requests import Session
 
+from config import VOLUME_STEP
+
 
 log = logging.getLogger(__name__)
 
 RPC_URL = 'http://{hostname}:{port}/mopidy/rpc'
-VOLUME_STEP = 5
 
 
 class MopidyClient():

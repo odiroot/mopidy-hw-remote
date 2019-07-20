@@ -1,3 +1,7 @@
+"""
+Source: https://andrewdupont.net/2017/04/28/
+        nostalgia-tron-part-6-adding-a-volume-knob-to-the-raspberry-pi/
+"""
 import logging
 from threading import current_thread
 
