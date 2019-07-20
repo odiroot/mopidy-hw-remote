@@ -30,3 +30,9 @@ Considered:
 * `machine.I2C` module for serial driver
 * `machine.Pin` module for reading input
 * `ssd1306` display driver
+
+## Design
+
+### Development rig
+
+![](./sketch_rpi_bb.png)
