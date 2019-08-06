@@ -5,9 +5,10 @@ import sys
 from queue import Queue
 from threading import Event, current_thread
 
-from config import DEBUG, PIN_A_NUM, PIN_B_NUM, PIN_BUT_NUM, MPD_HOST
+from config import (
+    DEBUG, PIN_A_NUM, PIN_B_NUM, PIN_BUT_NUM, MQTT_HOST, MQTT_TOPIC)
 from hardware import RotaryEncoder  # Only on RPi :(
-from mpdc import MopidyClient
+from mqtt import MopidyClient
 
 
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
@@ -24,7 +25,8 @@ def main():
     log.info('Starting MPD remote controller...')
     queue = Queue()
     event = Event()
-    client = MopidyClient(hostname=MPD_HOST)
+    client = MopidyClient(host=MQTT_HOST, topic=MQTT_TOPIC)
+    client.start()
 
     # Runs in the main thread to handle the work assigned to us by the
     # callbacks.
@@ -57,6 +59,8 @@ def main():
 
     # Clean up before hard exit.
     def on_exit(a, b):
+        client.stop()
+
         log.info('Stopping MPD remote controller...')
         encoder.destroy()
         sys.exit(0)

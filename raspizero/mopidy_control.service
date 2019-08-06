@@ -6,8 +6,9 @@ Description=Mopidy Control Service
 User=pi
 Group=pi
 # ExecStart=<project_path>/main.py
-# Environment=MPD_HOST=<mopidy_host>
-# Environment=DEBUG=1
+Environment=MQTT_HOST=127.0.0.1
+Environment=MQTT_TOPIC=mopidy
+Environment=DEBUG=1
 Restart=on-failure
 RestartSec=1s
 

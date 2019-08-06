@@ -102,3 +102,4 @@ ENV/
 .mypy_cache/
 
 mpdc/config.py
+.envrc

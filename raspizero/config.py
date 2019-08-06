@@ -10,7 +10,8 @@ PIN_B_NUM = getenv('PIN_B', 14)  # GPIO pin for signal B
 PIN_BUT_NUM = getenv('PIN_BUTTON', 18)  # GPIO pin for push button.
 
 # MPD configuration.
-MPD_HOST = getenv('MPD_HOST', 'localhost')  # Hostname of MPD instance.
+MQTT_HOST = getenv('MQTT_HOST', 'localhost')  # Hostname of MQTT broker.
+MQTT_TOPIC = getenv('MQTT_TOPIC', 'mopidy')
 
 # Volume control configuration.
 VOLUME_MIN = 5
