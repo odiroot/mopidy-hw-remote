@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 """
 Note: this one is only going to work with Python + luma.
 
@@ -70,7 +70,7 @@ def main():
             write_line(draw, line, li)
 
         # Fake status info.
-        write_line("Playing     @25%", row=6)
+        write_line(draw, "Playing     @25%", row=6)
 
     while True:
         time.sleep(1)

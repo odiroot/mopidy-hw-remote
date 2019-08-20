@@ -1,5 +1,5 @@
-#!/usr/bin/env python2.7
-""" 
+#!/usr/bin/env python
+"""
 Note: this one is only going to work with Python + luma.
 
 Establish the available space for display text on SSD1306.
@@ -14,7 +14,7 @@ from luma.oled.device import ssd1306
 # Text as in SSD1306 with Framebuf on MicroPython.
 DX = 8
 # Framebuf text height + some breathing space.
-DY = 8 + 1 
+DY = 8 + 1
 
 
 def main():
@@ -27,11 +27,11 @@ def main():
                 c = chr(65 + (i + j) % 26)
 
                 draw.text(
-                    (i * DX, j * DY), 
-                    c, 
+                    (i * DX, j * DY),
+                    c,
                     fill="white"
                 )
-    
+
     while True:
         time.sleep(1)
 
