@@ -2,13 +2,7 @@
 Source: https://andrewdupont.net/2017/04/28/
         nostalgia-tron-part-6-adding-a-volume-knob-to-the-raspberry-pi/
 """
-import logging
-from threading import current_thread
-
 from RPi import GPIO
-
-
-log = logging.getLogger(__name__)
 
 
 class RotaryEncoder():
@@ -48,17 +42,17 @@ class RotaryEncoder():
                                   self._button_callback, bouncetime=500)
 
     def destroy(self):
-        GPIO.remove_event_detect(self.gpio_a)
-        GPIO.remove_event_detect(self.gpio_b)
+        try:  # Easily fails on emulator, silence.
+            GPIO.remove_event_detect(self.gpio_a)
+            GPIO.remove_event_detect(self.gpio_b)
+        except Exception:
+            pass
         GPIO.cleanup((self.gpio_a, self.gpio_b, self.gpio_button))
 
     def _button_callback(self, channel):
         self.button_callback(GPIO.input(channel))
 
     def _callback(self, channel):
-        t = current_thread()
-        log.debug('Rotation callback, channel %s, thread %s %s', 
-                  channel, t.name, t.ident)
         level = GPIO.input(channel)
         # Remember last input from currently triggered pin.
         if channel == self.gpio_a:

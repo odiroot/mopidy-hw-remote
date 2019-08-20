@@ -8,17 +8,17 @@ log = logging.getLogger(__name__)
 
 
 class MopidyClient():
-    # XXX: Dirty non-authoritative state.
-    _last_state = None
-
-    def __init__(self, host='localhost', port=1883, topic='mopidy'):
+    def __init__(
+            self, host='localhost', port=1883, topic='mopidy', callback=None):
         self.host = host
         self.port = port
         self.topic = topic
+        self.callback = callback  # XXX: Dirty!
 
         self.client = mqtt.Client(
             client_id='remote-{}'.format(socket.gethostname()),
             clean_session=True)
+
         # React to events from MQTT broker.
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
@@ -38,41 +38,32 @@ class MopidyClient():
         log.info('Successfully connected to MQTT broker, result: %s', rc)
 
         # Follow playback state.
-        topic = '{}/state'.format(self.topic)
-        result, _ = self.client.subscribe(topic)
+        full_topic = '{}/i/#'.format(self.topic)
+        result, _ = self.client.subscribe(full_topic)
         if result == mqtt.MQTT_ERR_SUCCESS:
-            log.debug('Subscribed to MQTT topic: %s', topic)
+            log.debug('Subscribed to MQTT topic: %s', full_topic)
         else:
             log.warn('Failed to subscribe to MQTT topic: %s, result: %s',
-                     topic, result)
+                     full_topic, result)
 
     def _on_message(self, client, userdata, message):
         topic = message.topic.split('/')[-1]
         log.debug(
             'Received a MQTT message: %s on topic: %s', message.payload, topic)
-
-        # Simulate toggle by remembering the last state.
-        if topic == 'state':
-            self._last_state = message.payload.decode('utf-8')
+        if self.callback:
+            self.callback(topic, message.payload.decode('utf-8', 'replace'))
 
     def publish(self, subtopic, value):
-        topic = '{}/{}'.format(self.topic, subtopic)
+        full_topic = '{}/c/{}'.format(self.topic, subtopic)
 
-        log.debug('Publishing: %s to MQTT topic: %s', value, topic)
-        return self.client.publish(topic=topic, payload=value)
+        log.debug('Publishing: %s to MQTT topic: %s', value, full_topic)
+        return self.client.publish(topic=full_topic, payload=value)
 
     def toggle(self):
-        if self._last_state == 'playing':
-            return self.publish(subtopic='control', value='pause')
-        elif self._last_state == 'paused':
-            return self.publish(subtopic='control', value='resume')
-        elif self._last_state == 'stopped':
-            return self.publish(subtopic='control', value='play')
-        else:  # Have to go with something.
-            return self.publish(subtopic='info', value='state')
+        return self.publish(subtopic='plb', value='toggle')
 
-    def volume_inc(self):
-        return self.publish(subtopic='control', value='volplus')
+    def volume_inc(self, value=1):
+        return self.publish(subtopic='vol', value='+{}'.format(value))
 
-    def volume_dec(self):
-        return self.publish(subtopic='control', value='volminus')
+    def volume_dec(self, value=1):
+        return self.publish(subtopic='vol', value='-{}'.format(value))

@@ -1,0 +1,4 @@
+-r requirements.txt
+luma.emulator==1.2.0
+# NOTE: Original RPI.GPIO has to be removed first.
+-e git+https://github.com/nosix/raspberry-gpio-emulator/#egg=RPI.GPIO

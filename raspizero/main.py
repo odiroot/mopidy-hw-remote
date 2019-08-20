@@ -2,11 +2,16 @@
 import logging
 import signal
 import sys
+from enum import Enum
 from queue import Queue
-from threading import Event, current_thread
+from textwrap import fill
+from threading import Event
 
 from config import (
-    DEBUG, PIN_A_NUM, PIN_B_NUM, PIN_BUT_NUM, MQTT_HOST, MQTT_TOPIC)
+    DEBUG, PIN_A_NUM, PIN_B_NUM, PIN_BUT_NUM, MQTT_HOST, MQTT_TOPIC,
+    I2C_PORT, I2C_ADDRESS, VOLUME_STEP, FONT_NAME, FONT_SIZE,
+    DISPLAY_TIMEOUT)
+from display import Display
 from hardware import RotaryEncoder  # Only on RPi :(
 from mqtt import MopidyClient
 
@@ -15,17 +20,37 @@ logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
 log = logging.getLogger(__name__)
 
 
-# TODO: Extract constants.
-ACT_PUSH = 0
-ACT_DOWN = -1
-ACT_UP = 1
+class EncoderActions(Enum):
+    """Available rotary encoder actions to pass between threads."""
+    PUSH = 0
+    DOWN = -1
+    UP = 1
 
 
 def main():
     log.info('Starting MPD remote controller...')
     queue = Queue()
     event = Event()
-    client = MopidyClient(host=MQTT_HOST, topic=MQTT_TOPIC)
+    display = Display(
+        address=I2C_ADDRESS, port=I2C_PORT,
+        font_name=FONT_NAME, font_size=FONT_SIZE, timeout=DISPLAY_TIMEOUT)
+    display.start()
+
+    # XXX: Dirty.
+    # Reacting to MQTT messages.
+    def on_mqtt_msg(topic, payload):
+        if topic == 'sta':
+            return display.text('Playback:\n{}'.format(payload))
+        if topic == 'vol':
+            return display.text('Volume:\n{}'.format(payload))
+        if topic == 'trk':
+            title, artist, _ = payload.split(';')
+            title = fill('* ' + title, 15)
+            artist = fill('@ ' + artist, 15)
+            return display.text('{}\n{}'.format(title, artist))
+
+    client = MopidyClient(
+        host=MQTT_HOST, topic=MQTT_TOPIC, callback=on_mqtt_msg)
     client.start()
 
     # Runs in the main thread to handle the work assigned to us by the
@@ -35,31 +60,34 @@ def main():
         # we can catch up by only calling `amixer` once at the end.
         while not queue.empty():
             action = queue.get()
-            t = current_thread()
-            log.debug('Got action: %s, thread %s %s', action, t.name, t.ident)
+            log.debug('Got action: %s', action)
 
-            if action == ACT_PUSH:
+            if action == EncoderActions.PUSH:
                 client.toggle()
-            elif action == ACT_UP:
-                client.volume_inc()
-            elif action == ACT_DOWN:
-                client.volume_dec()
+            elif action == EncoderActions.UP:
+                client.volume_inc(VOLUME_STEP)
+            elif action == EncoderActions.DOWN:
+                client.volume_dec(VOLUME_STEP)
 
     # on_turn and on_press run in the background thread. We want them to do
     # as little work as possible, so all they do is enqueue the volume delta.
     def on_turn(delta):
-        queue.put(delta)
+        if delta > 0:
+            queue.put(EncoderActions.UP)
+        else:
+            queue.put(EncoderActions.DOWN)
         event.set()
 
     def on_press(value):
         # We'll use a value of 0 to signal that the main thread should toggle
         # its mute state.
-        queue.put(ACT_PUSH)
+        queue.put(EncoderActions.PUSH)
         event.set()
 
     # Clean up before hard exit.
     def on_exit(a, b):
         client.stop()
+        display.stop()
 
         log.info('Stopping MPD remote controller...')
         encoder.destroy()
