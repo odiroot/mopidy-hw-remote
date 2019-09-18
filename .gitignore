@@ -103,3 +103,6 @@ ENV/
 
 mpdc/config.py
 .envrc
+
+# Markdown docs.
+README.html
