@@ -7,13 +7,13 @@ from queue import Queue
 from textwrap import fill
 from threading import Event
 
-from config import (
-    DEBUG, PIN_A_NUM, PIN_B_NUM, PIN_BUT_NUM, MQTT_HOST, MQTT_TOPIC,
-    I2C_PORT, I2C_ADDRESS, VOLUME_STEP, FONT_NAME, FONT_SIZE,
-    DISPLAY_TIMEOUT)
-from display import Display
-from hardware import RotaryEncoder  # Only on RPi :(
-from mqtt import MopidyClient
+
+from .config import (DEBUG, DISPLAY_TIMEOUT, FONT_NAME, FONT_SIZE, I2C_ADDRESS,
+                     I2C_PORT, MQTT_HOST, MQTT_TOPIC, PIN_A_NUM, PIN_B_NUM,
+                     PIN_BUT_NUM, VOLUME_STEP)
+from .control import RotaryEncoder
+from .display import Display
+from .mqtt import MopidyClient
 
 
 logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
@@ -123,7 +123,3 @@ def main():
         # an empty queue and go right back to sleep.
         consume_queue()
         event.clear()
-
-
-if __name__ == '__main__':
-    main()

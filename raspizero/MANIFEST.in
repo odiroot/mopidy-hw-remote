@@ -1,0 +1,14 @@
+graft src
+
+include .editorconfig
+include setup.cfg
+include requirements-dev.txt
+include mopidy_control.service
+
+include README.md
+include LICENSE
+recursive-include docs *.fzz
+recursive-include docs *.jpg
+recursive-include docs *.png
+
+global-exclude *.py[cod] __pycache__ *.so *.dylib

@@ -5,7 +5,7 @@ Description=Mopidy Control Service
 [Service]
 User=pi
 Group=pi
-# ExecStart=<project_path>/main.py
+ExecStart=mopidy_remote
 Environment=MQTT_HOST=127.0.0.1
 Environment=MQTT_TOPIC=mopidy
 Environment=DEBUG=1

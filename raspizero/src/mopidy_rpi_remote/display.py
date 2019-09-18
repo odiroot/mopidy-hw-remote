@@ -1,7 +1,7 @@
 import logging
 from os.path import abspath, dirname, join
-from warnings import warn
 from threading import Timer
+from warnings import warn
 
 from luma.core.error import Error
 from luma.core.interface.serial import i2c
@@ -11,6 +11,8 @@ from PIL import ImageFont
 
 
 HERE = abspath(dirname(__file__))
+FONT_DIR = join(HERE, 'fonts')
+
 log = logging.getLogger(__name__)
 
 
@@ -27,7 +29,8 @@ class Display(object):
 
         # Override default font with a nicer one.
         if font_name and font_size:
-            self.font = ImageFont.truetype(join(HERE, font_name), font_size)
+            self.font = ImageFont.truetype(
+                join(FONT_DIR, font_name), font_size)
 
     def start(self):
         try:

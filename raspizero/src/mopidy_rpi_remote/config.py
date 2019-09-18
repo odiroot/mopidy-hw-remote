@@ -14,8 +14,6 @@ MQTT_HOST = getenv('MQTT_HOST', 'localhost')  # Hostname of MQTT broker.
 MQTT_TOPIC = getenv('MQTT_TOPIC', 'mopidy')
 
 # Volume control configuration.
-VOLUME_MIN = 5
-VOLUME_MAX = 99
 VOLUME_STEP = 4
 
 # Display configuration.
