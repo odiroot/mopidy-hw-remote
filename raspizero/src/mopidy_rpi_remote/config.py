@@ -19,6 +19,6 @@ VOLUME_STEP = 4
 # Display configuration.
 I2C_PORT = 1
 I2C_ADDRESS = 0x3C
-FONT_NAME = getenv('FONT_NAME', 'ProggyTiny.ttf')
+FONT_NAME = getenv('FONT_NAME', 'FreePixel.ttf')
 FONT_SIZE = int(getenv('FONT_SIZE', 16))
 DISPLAY_TIMEOUT = int(getenv('DISPLAY_TIMEOUT', 30))
