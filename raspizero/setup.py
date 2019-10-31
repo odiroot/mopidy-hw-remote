@@ -50,7 +50,7 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'luma.oled~=3.3.0',
-        'paho-mqtt~=1.4.0',
+        'paho-mqtt>=1.4,<1.6',
     ],
     entry_points={
         'console_scripts': [
