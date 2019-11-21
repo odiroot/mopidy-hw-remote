@@ -74,10 +74,10 @@ class Display(object):
             warn('Display device not initialised')
             return
 
-        with canvas(self.device) as draw:
+        with canvas(self.device, dither=True) as draw:
             coords = (1, 0,)
             draw.multiline_text(
-                coords, s, fill='white', font=self.font, spacing=1)
+                coords, s, fill='white', font=self.font, spacing=2)
         self.device.show()
 
         self.schedule_screen_saver()
