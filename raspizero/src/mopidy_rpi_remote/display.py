@@ -4,9 +4,9 @@ from threading import Timer
 from warnings import warn
 
 from luma.core.error import Error
-from luma.core.interface.serial import i2c
+from luma.core.interface.serial import spi
 from luma.core.render import canvas
-from luma.oled.device import ssd1306
+from luma.oled.device import ssd1331
 from PIL import ImageFont
 
 
@@ -34,18 +34,18 @@ class Display(object):
 
     def start(self):
         try:
-            serial = i2c(port=self.port, address=self.address)
-            # Initialise with default 128x64 matrix, mono.
-            self.device = ssd1306(serial)
+            serial = spi()
+            # Initialise with default 96x64 matrix, color.
+            self.device = ssd1331(serial)
         except Error:
             log.warn(
-                'Could not connect to i2c display: %s:%s',
+                'Could not connect to SPI display: %s:%s',
                 self.port, self.address)
             try:  # Try display emulator.
                 from luma.emulator.device import pygame
                 self.device = pygame(
-                    width=128, height=64,
-                    frame_rate=10,
+                    width=96, height=64,
+                    frame_rate=15,
                     scale=4,
                     transform='identity')
             except (Error, ImportError):
