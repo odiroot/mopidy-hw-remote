@@ -37,6 +37,8 @@ class Display(object):
             serial = spi()
             # Initialise with default 96x64 matrix, color.
             self.device = ssd1331(serial)
+            # Don't blast the eyes.
+            self.device.contrast(1)
         except Error:
             log.warn(
                 'Could not connect to SPI display: %s:%s',
