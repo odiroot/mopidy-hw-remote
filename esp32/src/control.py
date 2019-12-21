@@ -4,16 +4,28 @@ def parse_trk(value):
         return None
     if len(parts) == 1:
         return parts[0]
-    return ' - '.join(parts[:2])
+    return ' - '.join(parts[1::-1])
 
 
 class Controller:
-    def __init__(self, display, client):
+    def __init__(self, display, client, panel):
         self.d = display
         self.c = client
+        self.p = panel
 
+        # Bind the network commands to coetroller handlers.
         self.c.callback = self.on_msg
         self.d.text('Ready to go!')
+
+        # TODO: Refactor binding to Panel class itself.
+        # Bind the button input to controller handlers.
+        self.p.red.release_func(self.on_red_click)
+        self.p.yellow.release_func(self.on_yellow_click)
+        self.p.yellow.long_func(self.on_yellow_long)
+        self.p.green.release_func(self.on_green_click)
+        self.p.green.long_func(self.on_green_long)
+        self.p.orange.release_func(self.on_orange_click)
+        self.p.orange.long_func(self.on_orange_long)
 
     def on_trk(self, value):
         track = parse_trk(value)
@@ -44,3 +56,31 @@ class Controller:
             return
 
         handler(self, value)
+
+    async def on_red_click(self):
+        print('Toggle speakers')
+        await self.c.send('cmnd/speakers/power', 'toggle')
+
+    async def on_yellow_click(self):
+        print('Toggle play')
+        await self.c.send('mopidy/c/plb', 'toggle')
+
+    async def on_yellow_long(self):
+        print('Next track')
+        await self.c.send('mopidy/c/plb', 'next')
+
+    async def on_green_click(self):
+        print('Volume up')
+        await self.c.send('mopidy/c/vol', '+5')
+
+    async def on_green_long(self):
+        print('Volume UP!')
+        await self.c.send('mopidy/c/vol', '+50')
+
+    async def on_orange_click(self):
+        print('Volume down')
+        await self.c.send('mopidy/c/vol', '-5')
+
+    async def on_orange_long(self):
+        print('Volume DOWN!')
+        await self.c.send('mopidy/c/vol', '-50')

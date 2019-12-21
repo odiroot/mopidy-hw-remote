@@ -41,3 +41,7 @@ class Client:
             self.callback(cmd, msg)
         else:
             print((cmd, msg))
+
+    async def send(self, topic, msg):
+        return await self.mqtt.publish(
+            topic.encode('utf8'), msg.encode('utf8'))

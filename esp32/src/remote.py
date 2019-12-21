@@ -5,6 +5,7 @@ import uasyncio as asyncio
 from comms import Client
 from control import Controller
 from drawing import Display
+from panel import Panel
 from utils import enable_heartbeat, enable_stopper
 
 
@@ -20,9 +21,11 @@ def main():
     # Establish MQTT communication.
     client = Client('mopidy/i/#', verbose=True)
     client.start()
+    # Receive button input.
+    panel = Panel()
 
     # The coordination logic.
-    Controller(display=display, client=client)
+    Controller(display=display, client=client, panel=panel)
 
     try:  # Main loop!
         loop.run_forever()

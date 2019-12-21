@@ -14,7 +14,7 @@ SCL_PIN = const(15)
 RST_PIN = const(16)
 I2C_FREQ = const(400000)
 TIMER_FREQ = const(5000)
-SS_DELAY = const(60)  # Screensaver.
+SS_DELAY = const(120)  # Screensaver.
 MODAL_ROW = const(25)
 MODAL_TIME = const(2000)  # Modal "hanging" time.
 

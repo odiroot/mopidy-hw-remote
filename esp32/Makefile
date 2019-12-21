@@ -36,7 +36,4 @@ repl:
 reset:
 	rshell --buffer-size 512 --port ${PORT} --timing repl "~ import machine ~ machine.reset()~"
 
-
-# TODO: Compile MPY files
-
 .PHONY: help shell repl reset sync
