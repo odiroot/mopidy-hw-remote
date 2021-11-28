@@ -2,7 +2,8 @@ import gc
 import micropython
 import uasyncio as asyncio
 
-from shared import client, display
+from control import Controller
+from shared import client, display, panel
 from utils import restart_later, sleeper
 from wifi import go_online
 
@@ -13,6 +14,8 @@ gc.collect()
 
 def run():
     print("Starting main task")
+    loop = asyncio.get_event_loop()
+    
     display.start()
     display.text('Hello!')
     
@@ -24,9 +27,11 @@ def run():
     if client.start():
         display.text("MQTT connected")
     
+    Controller(display=display, client=client, panel=panel)
     gc.collect()
+        
     # Keep spinning!
-    asyncio.run(sleeper())
+    loop.run_forever()
     
 
 def cleanup():
@@ -41,6 +46,9 @@ except Exception as e:
     display.text("Crash. Will restart.")
     raise e  # For console debugging.
 finally:
-    cleanup()
+    try:
+        cleanup()
+    except:
+        pass
     restart_later()
     

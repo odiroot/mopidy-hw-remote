@@ -59,28 +59,28 @@ class Controller:
 
     async def on_red_click(self):
         print('Toggle speakers')
-        await self.c.send('cmnd/speakers/power', 'toggle')
+        self.c.send('cmnd/speakers/power', 'toggle')
 
     async def on_yellow_click(self):
         print('Toggle play')
-        await self.c.send('mopidy/c/plb', 'toggle')
+        self.c.send('mopidy/c/plb', 'toggle')
 
     async def on_yellow_long(self):
         print('Next track')
-        await self.c.send('mopidy/c/plb', 'next')
+        self.c.send('mopidy/c/plb', 'next')
 
     async def on_green_click(self):
         print('Volume up')
-        await self.c.send('mopidy/c/vol', '+5')
+        self.c.send('mopidy/c/vol', '+5')
 
     async def on_green_long(self):
         print('Volume UP!')
-        await self.c.send('mopidy/c/vol', '+50')
+        self.c.send('mopidy/c/vol', '+50')
 
     async def on_orange_click(self):
         print('Volume down')
-        await self.c.send('mopidy/c/vol', '-5')
+        self.c.send('mopidy/c/vol', '-5')
 
     async def on_orange_long(self):
         print('Volume DOWN!')
-        await self.c.send('mopidy/c/vol', '-50')
+        self.c.send('mopidy/c/vol', '-50')
