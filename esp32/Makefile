@@ -16,7 +16,6 @@ VENDOR="./vendor"
 
 
 get_vendor:
-	micropython -m upip install -p ${VENDOR} -r requirements.txt
 	wget -N -i requirements-url.txt -P ${VENDOR}
 
 sync_vendor:
@@ -36,4 +35,7 @@ repl:
 reset:
 	rshell --buffer-size 512 --port ${PORT} --timing repl "~ import machine ~ machine.reset()~"
 
-.PHONY: help shell repl reset sync
+reset_stay:
+	rshell --buffer-size 512 --port ${PORT} --timing repl "~ import machine ~ machine.reset()"
+
+.PHONY: help shell repl reset sync reset_stay
