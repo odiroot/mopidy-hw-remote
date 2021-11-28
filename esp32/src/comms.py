@@ -47,7 +47,7 @@ class Client:
             while True:
                 self.mqtt.check_msg()
                 asyncio.sleep_ms(50)
-        except CancelledError:
+        except asyncio.CancelledError:
             print("Stopping pulling.")
 
     def send(self, topic, msg):
