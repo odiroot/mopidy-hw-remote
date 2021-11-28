@@ -59,7 +59,7 @@ class Display:
         if not self._on:  # Already turned off.
             return
         # Last refresh was long ago.
-        if time.time() - self._ls > SS_DELAY:
+        if self._ls and (time.time() - self._ls > SS_DELAY):
             if self.verbose:
                 print('Shutting down display')
             self.dev.poweroff()  # Saving power and OLED panel.

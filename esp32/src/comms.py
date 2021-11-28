@@ -1,5 +1,5 @@
 import uasyncio as asyncio
-from mqtt_as import config, MQTTClient
+from umqtt.simple2 import MQTTClient
 
 import access
 
@@ -7,33 +7,32 @@ import access
 class Client:
     callback = None
 
-    def __init__(self, topic, verbose=False):
+    def __init__(self, topic="mopidy/i/#"):
         self.topic = topic
-        self.verbose = verbose
-        # Configure the MQTT library for current board.
-        config.update(
-            server=access.HOST,
-            ssid=access.SSID,
-            wifi_pw=access.PASSWORD,
-            connect_coro=self._on_conn,
-            subs_cb=self._on_msg,
+        self.mqtt = MQTTClient(
+            b"esp32_ctrl", access.HOST, keepalive=5, socket_timeout=15
         )
-        self.mqtt = MQTTClient(config)
+        self.mqtt.set_callback(self._on_msg)
+        self._pull_task = None
 
     def start(self):
+        print("Connecting to broker...")
+        self.mqtt.connect(clean_session=True)
+        print("Connected to MQTT broker.")
+        self.mqtt.subscribe(self.topic)
+        print("Subscribed to topic.")
+        
         loop = asyncio.get_event_loop()
-        loop.create_task(self.mqtt.connect())
+        self._pull_task = loop.create_task(self._puller())
+        return True
 
     def stop(self):
-        # Prevent LmacRxBlk:1 errors.
-        self.mqtt.close()
+        if self._pull_task:
+            self._pull_task.cancel()
+            self._pull_task = None
+        self.mqtt.disconnect()
 
-    async def _on_conn(self, client):
-        if self.verbose:
-            print('Connected to broker. Subscribing to: %s.' % self.topic)
-        await client.subscribe(self.topic)
-
-    def _on_msg(self, topic, msg, _):
+    def _on_msg(self, topic, msg, retain, dup):
         cmd = topic.decode('utf8').split('/')[-1]
         msg = msg.decode('ut8')
 
@@ -41,7 +40,15 @@ class Client:
             self.callback(cmd, msg)
         else:
             print((cmd, msg))
+            
+    async def _puller(self):
+        print("Starting pulling.")
+        try:
+            while True:
+                self.mqtt.check_msg()
+                asyncio.sleep_ms(50)
+        except CancelledError:
+            print("Stopping pulling.")
 
-    async def send(self, topic, msg):
-        return await self.mqtt.publish(
-            topic.encode('utf8'), msg.encode('utf8'))
+    def send(self, topic, msg):
+        self.mqtt.publish(topic.encode('utf8'), msg.encode('utf8'))
