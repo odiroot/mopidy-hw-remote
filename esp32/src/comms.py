@@ -49,6 +49,8 @@ class Client:
                 asyncio.sleep_ms(50)
         except asyncio.CancelledError:
             print("Stopping pulling.")
+        except Exception as e:
+            print("Pulling error:", e)
 
     def send(self, topic, msg):
         self.mqtt.publish(topic.encode('utf8'), msg.encode('utf8'))
