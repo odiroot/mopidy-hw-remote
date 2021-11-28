@@ -1,3 +1,4 @@
+import uasyncio as asyncio
 import machine
 import time
     
