@@ -16,6 +16,7 @@ VENDOR="./vendor"
 
 
 get_vendor:
+	micropython -m upip install -p ${VENDOR} -r requirements.txt
 	wget -N -i requirements-url.txt -P ${VENDOR}
 
 sync_vendor:
