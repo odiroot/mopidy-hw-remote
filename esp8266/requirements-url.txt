@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/peterhinch/micropython-mqtt/master/mqtt_as/mqtt_as.py
+https://raw.githubusercontent.com/kevinkk525/pysmartnode/dev/pysmartnode/utils/abutton.py
